@@ -4,7 +4,11 @@ import isTrue from 'crocks/predicates/isTrue'
 import isBoolean from 'crocks/predicates/isBoolean'
 import ifElse from 'crocks/logic/ifElse'
 
-const eitherFromBoolean =
-  ifElse(isBoolean, ifElse(isTrue, Right, Left), Left)
+const booleanToEither =
+  ifElse(
+    isBoolean,
+    ifElse(isTrue, Right, Left),
+    Left
+  )
 
-export default eitherFromBoolean
+export default booleanToEither

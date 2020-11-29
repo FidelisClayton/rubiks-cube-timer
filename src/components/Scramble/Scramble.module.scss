@@ -1,0 +1,7 @@
+.root {
+  .move {
+    &:not(:last-of-type) {
+      margin-right: 5px;
+    }
+  }
+}

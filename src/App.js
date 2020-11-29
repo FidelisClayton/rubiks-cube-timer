@@ -19,13 +19,15 @@ import isFalse from 'crocks/predicates/isFalse'
 
 import equals from 'crocks/pointfree/equals'
 
-import eitherFromBoolean from './helpers/eitherFromBoolean'
-import makeScramble from './domain/makeScramble'
+import { generate as generateScramble } from './domain/scramble'
+import booleanToEither from './helpers/booleanToEither'
 
-import './App.css'
+import Timer from './components/Timer'
+import ActionButton from './components/ActionButton'
+import Scramble from './components/Scramble'
 
-const subtract = (x) => (y) => x - y
-const toSeconds = (ms) => ms / 1000
+import classes from './App.module.scss'
+
 const getProp = getPropOr()
 
 const setIntervalCurried = flip(binary(setInterval))
@@ -35,23 +37,23 @@ const isSpaceBarPressed = (event) => equals(32)(getProp('keyCode')(event))
 const { Just, Nothing } = Maybe
 
 function App() {
-  const [scramble, setScramble] = React.useState(makeScramble())
+  const [scramble, setScramble] = React.useState(generateScramble([]))
   const [isPlaying, setIsPlaying] = React.useState(false)
   const [startTime, setStartTime] = React.useState(Nothing)
   const [endTime, setEndTime] = React.useState(Nothing)
 
   const handleStart = () => {
-    const now = Just(Date.now())
+    const maybeNow = Just(Date.now())
 
     setIsPlaying(true)
-    setStartTime(now)
-    setEndTime(now)
+    setStartTime(maybeNow)
+    setEndTime(maybeNow)
   }
 
   const handleStop = () => {
     setIsPlaying(false)
     setEndTime(Maybe.of(Date.now()))
-    setScramble(makeScramble([]))
+    setScramble(generateScramble([]))
   }
 
   const handleKeyUp =
@@ -60,25 +62,13 @@ function App() {
       ifElse(constant(isPlaying), handleStop, handleStart)
     )
 
-  const renderStart = () => <button onClick={handleStart}>Start</button>
-  const renderStop = () => <button onClick={handleStop}>Stop</button>
-  const renderScramble = () => <p>{scramble.join(' ')}</p>
-  const renderButton = ifElse(isTrue, renderStop, renderStart)
-
-  const renderTime = () => {
-    return Maybe
-      .of(subtract)
-      .ap(endTime)
-      .ap(startTime)
-      .map(toSeconds)
-      .either(unit, (time) => <span>{time}</span>)
-  }
+  const renderScramble = () => <Scramble className={classes.scramble} moves={scramble} />
 
   useEffect(() => {
     const handleInterval = () => applyTo(pipe(Date.now, Maybe.of), setEndTime)
 
     const intervalId =
-      eitherFromBoolean(isPlaying)
+      booleanToEither(isPlaying)
         .map(constant(handleInterval))
         .map(setIntervalCurried(50))
 
@@ -92,14 +82,21 @@ function App() {
   }, [handleKeyUp])
 
   return (
-    <div className="App">
-      <header className="App-header">
-        {when(isFalse, renderScramble)(isPlaying)}
+    <div className={classes.root}>
+      {when(isFalse, renderScramble)(isPlaying)}
 
-        {renderTime()}
+      <Timer
+        className={classes.timer}
+        startTime={startTime}
+        endTime={endTime}
+        isPlaying={isPlaying}
+      />
 
-        {renderButton(isPlaying)}
-      </header>
+      <ActionButton
+        onStart={handleStart}
+        onStop={handleStop}
+        isPlaying={isPlaying}
+      />
     </div>
   );
 }
