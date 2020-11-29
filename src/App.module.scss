@@ -8,4 +8,14 @@
   .scramble, .timer {
     margin-bottom: 40px;
   }
+
+  .helperText {
+    margin-top: 24px;
+
+    code {
+      border: 1px solid #e6e6e6;
+      font-size: 0.85rem;
+      padding: 2px;
+    }
+  }
 }

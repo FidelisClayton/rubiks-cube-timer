@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Maybe from 'crocks/Maybe'
 
@@ -14,8 +14,8 @@ import unit from 'crocks/helpers/unit'
 import ifElse from 'crocks/logic/ifElse'
 import when from 'crocks/logic/when'
 
-import isTrue from 'crocks/predicates/isTrue'
 import isFalse from 'crocks/predicates/isFalse'
+import isTrue from 'crocks/predicates/isTrue'
 
 import equals from 'crocks/pointfree/equals'
 
@@ -37,10 +37,10 @@ const isSpaceBarPressed = (event) => equals(32)(getProp('keyCode')(event))
 const { Just, Nothing } = Maybe
 
 function App() {
-  const [scramble, setScramble] = React.useState(generateScramble([]))
-  const [isPlaying, setIsPlaying] = React.useState(false)
-  const [startTime, setStartTime] = React.useState(Nothing)
-  const [endTime, setEndTime] = React.useState(Nothing)
+  const [scramble, setScramble] = useState(generateScramble([]))
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [startTime, setStartTime] = useState(Nothing)
+  const [endTime, setEndTime] = useState(Nothing)
 
   const handleStart = () => {
     const maybeNow = Just(Date.now())
@@ -63,6 +63,20 @@ function App() {
     )
 
   const renderScramble = () => <Scramble className={classes.scramble} moves={scramble} />
+
+  const renderStartHelperText = () => (
+    <span className={classes.helperText}>
+      Or hold <code>space</code> then leave it to start.
+    </span>
+  )
+
+  const renderStopHelperText = () => (
+    <span className={classes.helperText}>
+      Press <code>space</code> to stop the timer.
+    </span>
+  )
+
+  const renderHelperText = () => ifElse(isTrue, renderStopHelperText, renderStartHelperText)(isPlaying)
 
   useEffect(() => {
     const handleInterval = () => applyTo(pipe(Date.now, Maybe.of), setEndTime)
@@ -97,6 +111,8 @@ function App() {
         onStop={handleStop}
         isPlaying={isPlaying}
       />
+
+      {renderHelperText()}
     </div>
   );
 }
