@@ -2,11 +2,12 @@
   body {
     background-color: #2F2F2F;
     color: rgba(255, 255, 255, 0.75);
+    padding: 20px;
   }
 }
 
 .root {
-  maxWidth: 600px;
+  max-width: 600px;
   margin: 0 auto;
 
   .main {

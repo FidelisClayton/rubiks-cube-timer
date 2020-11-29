@@ -41,12 +41,14 @@ const isSpaceBarPressed = (event) => equals(32)(getProp('keyCode')(event))
 
 const { Just, Nothing } = Maybe
 
+const maybeInitialTime = Maybe.of(Date.now())
+
 function App() {
   const [history, setHistory] = useState(historyDomain.list())
   const [scramble, setScramble] = useState(scrambleDomain.generate([]))
   const [isPlaying, setIsPlaying] = useState(false)
-  const [startTime, setStartTime] = useState(Nothing)
-  const [endTime, setEndTime] = useState(Nothing)
+  const [startTime, setStartTime] = useState(maybeInitialTime)
+  const [endTime, setEndTime] = useState(maybeInitialTime)
 
   const handleStart = (event) => {
     event.preventDefault()

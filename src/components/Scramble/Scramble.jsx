@@ -12,9 +12,7 @@ import classes from './Scramble.module.scss'
 const Scramble = ({ moves, className }) => {
   const safeMoves = safe(isArray, moves)
 
-  const renderMove = (move, index) => <span key={index} className={classes.move}>{move}</span>
-
-  const renderMoves = (moves) => moves.map(renderMove)
+  const renderMoves = (moves) => moves.join(' ')
 
   return (
     <div className={clsx(classes.root, className)}>
