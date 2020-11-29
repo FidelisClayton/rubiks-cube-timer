@@ -8,13 +8,12 @@ import applyTo from 'crocks/combinators/applyTo'
 
 import pipe from 'crocks/helpers/pipe'
 import binary from 'crocks/helpers/binary'
-import getPropOr from 'crocks/helpers/getPropOr'
 import unit from 'crocks/helpers/unit'
 
 import ifElse from 'crocks/logic/ifElse'
 import when from 'crocks/logic/when'
 
-import equals from 'crocks/pointfree/equals'
+import propEq from 'crocks/predicates/propEq'
 
 import scrambleDomain from '../domain/scramble'
 import historyDomain from '../domain/history'
@@ -23,11 +22,9 @@ import subtract from '../helpers/subtract'
 import preventDefault from '../helpers/preventDefault'
 import booleanToEither from '../helpers/booleanToEither'
 
-const getProp = getPropOr()
-
 const setIntervalCurried = flip(binary(setInterval))
 
-const isSpaceBarPressed = (event) => equals(32)(getProp('keyCode')(event))
+const isSpaceBarPressed = propEq('keyCode', 32)
 
 const { Just } = Maybe
 
