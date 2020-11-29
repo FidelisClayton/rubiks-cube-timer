@@ -1,4 +1,7 @@
 .root {
+  color: #fff;
+  font-weight: 500;
+
   .move {
     &:not(:last-of-type) {
       margin-right: 5px;

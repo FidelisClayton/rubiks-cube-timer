@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.1.2",
     "clsx": "^1.1.1",
     "crocks": "^0.12.4",
+    "date-fns": "^2.16.1",
     "node-sass": "^4.0.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",

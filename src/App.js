@@ -19,14 +19,19 @@ import isTrue from 'crocks/predicates/isTrue'
 
 import equals from 'crocks/pointfree/equals'
 
-import { generate as generateScramble } from './domain/scramble'
-import booleanToEither from './helpers/booleanToEither'
+import scrambleDomain from './domain/scramble'
+import historyDomain from './domain/history'
 
 import Timer from './components/Timer'
 import ActionButton from './components/ActionButton'
 import Scramble from './components/Scramble'
+import HistoryTable from './components/HistoryTable'
 
 import classes from './App.module.scss'
+import subtract from './helpers/subtract'
+import preventDefault from './helpers/preventDefault'
+import booleanToEither from './helpers/booleanToEither'
+import { isNotEmpty } from './helpers/predicates'
 
 const getProp = getPropOr()
 
@@ -37,12 +42,15 @@ const isSpaceBarPressed = (event) => equals(32)(getProp('keyCode')(event))
 const { Just, Nothing } = Maybe
 
 function App() {
-  const [scramble, setScramble] = useState(generateScramble([]))
+  const [history, setHistory] = useState(historyDomain.list())
+  const [scramble, setScramble] = useState(scrambleDomain.generate([]))
   const [isPlaying, setIsPlaying] = useState(false)
   const [startTime, setStartTime] = useState(Nothing)
   const [endTime, setEndTime] = useState(Nothing)
 
-  const handleStart = () => {
+  const handleStart = (event) => {
+    event.preventDefault()
+
     const maybeNow = Just(Date.now())
 
     setIsPlaying(true)
@@ -50,10 +58,21 @@ function App() {
     setEndTime(maybeNow)
   }
 
-  const handleStop = () => {
+  const handleStop = (event) => {
+    event.preventDefault()
+
+    const maybeEndTime = Maybe.of(Date.now())
+
     setIsPlaying(false)
-    setEndTime(Maybe.of(Date.now()))
-    setScramble(generateScramble([]))
+    setEndTime(maybeEndTime)
+    setScramble(scrambleDomain.generate([]))
+
+    Maybe
+      .of(subtract)
+      .ap(maybeEndTime)
+      .ap(startTime)
+      .map(historyDomain.save)
+      .map(setHistory)
   }
 
   const handleKeyUp =
@@ -61,6 +80,8 @@ function App() {
       isSpaceBarPressed,
       ifElse(constant(isPlaying), handleStop, handleStart)
     )
+
+  const handleKeyDown =  when(isSpaceBarPressed, preventDefault)
 
   const renderScramble = () => <Scramble className={classes.scramble} moves={scramble} />
 
@@ -77,6 +98,8 @@ function App() {
   )
 
   const renderHelperText = () => ifElse(isTrue, renderStopHelperText, renderStartHelperText)(isPlaying)
+
+  const renderHistoryTable = (history) => <HistoryTable history={history} />
 
   useEffect(() => {
     const handleInterval = () => applyTo(pipe(Date.now, Maybe.of), setEndTime)
@@ -95,24 +118,34 @@ function App() {
     return () => window.removeEventListener('keyup', handleKeyUp)
   }, [handleKeyUp])
 
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
+
   return (
     <div className={classes.root}>
-      {when(isFalse, renderScramble)(isPlaying)}
 
-      <Timer
-        className={classes.timer}
-        startTime={startTime}
-        endTime={endTime}
-        isPlaying={isPlaying}
-      />
+      <main className={classes.main}>
+        {when(isFalse, renderScramble)(isPlaying)}
 
-      <ActionButton
-        onStart={handleStart}
-        onStop={handleStop}
-        isPlaying={isPlaying}
-      />
+        <Timer
+          className={classes.timer}
+          startTime={startTime}
+          endTime={endTime}
+          isPlaying={isPlaying}
+        />
 
-      {renderHelperText()}
+        <ActionButton
+          onStart={handleStart}
+          onStop={handleStop}
+          isPlaying={isPlaying}
+        />
+
+        {renderHelperText()}
+      </main>
+
+
+      {when(isNotEmpty, renderHistoryTable)(history)}
     </div>
   );
 }

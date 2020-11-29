@@ -1,0 +1,33 @@
+.root {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .date {
+    text-align: left;
+  }
+
+  .time {
+    text-align: right;
+  }
+
+  td, th {
+    padding: 10px 20px;
+  }
+
+  th {
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  tr:not(:last-of-type) {
+    td, th {
+      border-bottom: 1px solid #2a2a2a;
+    }
+  }
+
+  .title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+}

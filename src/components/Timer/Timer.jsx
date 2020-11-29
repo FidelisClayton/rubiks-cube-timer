@@ -5,7 +5,8 @@ import unit from 'crocks/helpers/unit'
 import clsx from 'clsx'
 
 import classes from './Timer.module.css'
-import { subtract, msToSeconds } from './Timer.helpers'
+import subtract from '../../helpers/subtract'
+import msToSeconds from '../../helpers/msToSeconds'
 
 const { Nothing } = Maybe
 
