@@ -1,4 +1,3 @@
-import safe from 'crocks/Maybe/safe'
 import isDate from 'crocks/predicates/isDate'
 import ifElse from 'crocks/logic/ifElse'
 import identity from 'crocks/combinators/identity'

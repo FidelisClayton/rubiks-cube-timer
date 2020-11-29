@@ -6,7 +6,6 @@ import constant from 'crocks/combinators/constant'
 import isString from 'crocks/predicates/isString'
 import isArray from 'crocks/predicates/isArray'
 import ifElse from 'crocks/logic/ifElse'
-import tap from 'crocks/helpers/tap'
 
 import maybeToResult from 'crocks/Result/maybeToResult'
 import safe from 'crocks/Maybe/safe'
