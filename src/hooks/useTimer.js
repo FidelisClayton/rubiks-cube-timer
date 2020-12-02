@@ -90,11 +90,7 @@ const useTimer = () => {
     isPlaying,
     setIsPlaying,
     startTime,
-    setStartTime,
     endTime,
-    setEndTime,
-    handleKeyUp,
-    handleKeyDown,
     handleStart,
     handleStop,
   }
